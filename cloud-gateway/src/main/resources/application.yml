@@ -1,0 +1,30 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: cloud-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    gateway:
+      routes:
+        - id: service-provider-a
+          uri: lb://service-provider-a
+          predicates:
+            - Path=/service-a/**
+          filters:
+            - StripPrefix=1
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+
+logging:
+  pattern:
+    level: "%5p [cloud-gateway,%X{traceId:-},%X{spanId:-}]"
